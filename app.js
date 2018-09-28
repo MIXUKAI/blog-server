@@ -1,6 +1,14 @@
 const Koa = require('koa');
 const Router = require('koa-router');
-const { port } = require('./config');
+const mongoose = require('mongoose');
+const { port, connectionStr } = require('./config');
+
+// Connect to the database
+mongoose.connect(connectionStr);
+// Get notified if we connect successfully or if a connection error occurs
+const db = mongoose.connection;
+db.on('error', err => console.log(err));
+db.once('open', () => console.log('Congratulations, mongodb connected successfully~'));
 
 // Create Koa application
 const app = new Koa();
