@@ -7,7 +7,7 @@ const { port, connectionStr } = require('./config');
 mongoose.connect(connectionStr);
 // Get notified if we connect successfully or if a connection error occurs
 const db = mongoose.connection;
-db.on('error', err => console.log(err));
+db.on('error', err => console.error(err));
 db.once('open', () => console.log('Congratulations, mongodb connected successfully~'));
 
 // Create Koa application
