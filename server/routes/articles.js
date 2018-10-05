@@ -13,6 +13,6 @@ router.prefix(prefixPath);
 
 router.get('/', ArticleControllers.findAll);
 
-router.get('/add', ArticleControllers.add);
+router.post('/add', ArticleControllers.add);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const articleSchema = new Schema({
   title: { type: String, required: true },
   author: { type: String, default: 'guanine' },
+  description: { type: String, default: '' },
   md_content: { type: String, default: ''},
   html_content: { type: String, default: '' },
   category: { type: String, },

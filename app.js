@@ -1,5 +1,7 @@
 const Koa = require('koa');
+const cors = require('koa2-cors');
 const Router = require('koa-router');
+var bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
 const { hostname, port, connectionStr } = require('./config');
 
@@ -15,6 +17,18 @@ db.once('open', () => console.log('Congratulations, mongodb connected successful
 // Create Koa application
 const app = new Koa();
 const router = new Router();
+
+app.use(bodyParser());
+
+// TODO: 现在已经成功了，之后再仔细配置下
+app.use(cors({
+  origin: '*',
+  exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+  maxAge: 5,
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+}));
 
 // index page
 router.get('/', index);

@@ -7,16 +7,13 @@ class ArticleControllers {
   }
 
   static async add(ctx) {
-    const article = await new Article({
-      title: 'lodash.js curry',
-      author: 'mixukai',
-      md_content: '## h1',
-      html_content: '<h2>h1</h2>',
-      category: 'life',
-      tags: ['javascript', 'programming'],
-      hidden: false
-    }).save();
-    ctx.body = await 'add successfully';
+    try {
+      const article = await new Article(ctx.request.body).save();
+      ctx.body = article;
+    } catch (err) {
+      // TODO: what's 422 means
+      ctx.throw(422);
+    }
   }
 }
 
