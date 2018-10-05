@@ -1,10 +1,12 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const mongoose = require('mongoose');
-const { port, connectionStr } = require('./config');
+const { hostname, port, connectionStr } = require('./config');
+
+const articleRouter = require('./server/routes/articles');
 
 // Connect to the database
-mongoose.connect(connectionStr);
+mongoose.connect(connectionStr, { useNewUrlParser: true });
 // Get notified if we connect successfully or if a connection error occurs
 const db = mongoose.connection;
 db.on('error', err => console.error(err));
@@ -32,7 +34,10 @@ function getArticle(ctx) {
 
 app.use(router.routes()).use(router.allowedMethods());
 
+app.use(articleRouter.routes());
+
 // Start the application
-app.listen(port, () => {
-  console.log('server is running at http://localhost:3000/')
+const server = app.listen(port, hostname, () => {
+  const address = server.address();
+  console.log(`server is running at http://${address.address}:${address.port}/`);
 })
