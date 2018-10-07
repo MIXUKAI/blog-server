@@ -2,8 +2,17 @@ const Article = require('../models/articles').Article;
 
 class ArticleControllers {
 
+  // 查询所有的文章，暂且没用
   static async findAll(ctx) {
     ctx.body = await Article.find();
+  }
+
+  static async findByPage(ctx) {
+    // TODO: need try catch?
+    const sizeOfPage = 3;
+    const page = ctx.query.page || 1;
+    const skipPage = page - 1;
+    ctx.body = await Article.find().skip(skipPage * sizeOfPage).limit(sizeOfPage);
   }
 
   static async findById(ctx) {
