@@ -15,7 +15,6 @@ class ArticleControllers {
     ctx.body = await Article.find().skip(skipPage * sizeOfPage).limit(sizeOfPage);
   }
 
-
   static async findByTagName(ctx) {
     try {
       const article = await Article.find({ tags: ctx.params.tagname });
@@ -46,6 +45,29 @@ class ArticleControllers {
     }
   }
 
+  static async findByIdAndUpdate(ctx) {
+    try {
+      const article = await Article.findByIdAndUpdate(ctx.params.id, ctx.request.body);
+      if (!article) {
+        ctx.throw(404);
+      }
+      ctx.body = {
+        code: 0, // 0代表成功
+        msg: 'successful',
+        data: article
+      };
+    } catch (err) {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+        ctx.throw(404);
+      }
+      ctx.body = {
+        code: 1,
+        msg: 'fail'
+      };
+      ctx.throw(500);
+    }
+  }
+
   static async add(ctx) {
     try {
       const article = await new Article(ctx.request.body).save();
@@ -63,6 +85,7 @@ class ArticleControllers {
       ctx.throw(422);
     }
   }
+
 }
 
 module.exports = { ArticleControllers };
