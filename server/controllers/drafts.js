@@ -1,43 +1,29 @@
+const Draft = require('../models/drafts').Draft;
 const Article = require('../models/articles').Article;
 
-class ArticleControllers {
+class DraftControllers {
 
-  // 查询所有的文章
+  // 查询所有的草稿
   static async findAll(ctx) {
-    ctx.body = await Article.find({hidden: false});
+    ctx.body = await Draft.find({ hidden: false });
   }
 
   static async findByPage(ctx) {
     // TODO: need try catch?
-    const sizeOfPage = 5;
+    const sizeOfPage = 10;
     const page = ctx.query.page || 1;
     const skipPage = page - 1;
-    ctx.body = await Article.find({hidden: false}).skip(skipPage * sizeOfPage).limit(sizeOfPage);
+    ctx.body = await Draft.find({ hidden: false }).skip(skipPage * sizeOfPage).limit(sizeOfPage);
   }
 
-  static async findByTagName(ctx) {
-    try {
-      const article = await Article.find({ tags: ctx.params.tagname, hidden: false });
-      if (!article) {
-        ctx.throw(404);
-      }
-      ctx.body = article;
-    } catch (err) {
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
-        ctx.throw(404);
-      }
-      ctx.throw(500);
-    }
-  }
-
-  // 因为能够展示出来id的已经是hidden为false的了，所有不再需要设置了
+  // 根据id来查找到草稿
   static async findById(ctx) {
     try {
-      const article = await Article.findById(ctx.params.id);
-      if (!article) {
+      const draft = await Draft.findById(ctx.params.id);
+      if (!draft) {
         ctx.throw(404);
       }
-      ctx.body = article;
+      ctx.body = draft;
     } catch (err) {
       if (err.name === 'CastError' || err.name === 'NotFoundError') {
         ctx.throw(404);
@@ -48,14 +34,14 @@ class ArticleControllers {
 
   static async findByIdAndUpdate(ctx) {
     try {
-      const article = await Article.findByIdAndUpdate(ctx.params.id, ctx.request.body);
-      if (!article) {
+      const draft = await Draft.findByIdAndUpdate(ctx.params.id, ctx.request.body);
+      if (!draft) {
         ctx.throw(404);
       }
       ctx.body = {
         code: 0, // 0代表成功
         msg: 'successful',
-        data: article
+        data: draft
       };
     } catch (err) {
       if (err.name === 'CastError' || err.name === 'NotFoundError') {
@@ -71,11 +57,11 @@ class ArticleControllers {
 
   static async add(ctx) {
     try {
-      const article = await new Article(ctx.request.body).save();
+      const draft = await new Draft(ctx.request.body).save();
       ctx.body = {
         code: 0, // 0代表成功
         msg: 'successful',
-        data: article
+        data: draft
       };
     } catch (err) {
       ctx.body = {
@@ -90,10 +76,35 @@ class ArticleControllers {
   // 不是真正的删除，只是吧hidden设置true，然后就不展示了
   static async findByIdAndSetHidden(ctx) {
     try {
-      const article = await Article.findByIdAndUpdate(ctx.params.id, {hidden: true});
-      if (!article) {
+      const draft = await Draft.findByIdAndUpdate(ctx.params.id, { hidden: true });
+      if (!draft) {
         ctx.throw(404);
       }
+      ctx.body = {
+        code: 0, // 0代表成功
+        msg: 'successful',
+        data: draft
+      };
+    } catch (err) {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+        ctx.throw(404);
+      }
+      ctx.body = {
+        code: 1,
+        msg: 'fail'
+      };
+      ctx.throw(500);
+    }
+  }
+
+  // 根据草稿id号来发布草稿，并从草稿箱中删除
+  static async removeFromDraftsAndAddToArticles(ctx) {
+    try {
+      const draft = await Draft.findByIdAndUpdate(ctx.params.id, { hidden: true });
+      if (!draft) {
+        ctx.throw(404);
+      }
+      const article = new Article(draft).save();
       ctx.body = {
         code: 0, // 0代表成功
         msg: 'successful',
@@ -112,4 +123,4 @@ class ArticleControllers {
   }
 }
 
-module.exports = { ArticleControllers };
+module.exports = { DraftControllers };

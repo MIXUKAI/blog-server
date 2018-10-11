@@ -7,6 +7,7 @@ const { hostname, port, connectionStr } = require('./config');
 
 const articleRouter = require('./server/routes/articles');
 const tagRouter = require('./server/routes/tags');
+const draftRouter = require('./server/routes/drafts');
 
 // Connect to the database
 mongoose.connect(connectionStr, { useNewUrlParser: true });
@@ -51,6 +52,7 @@ app.use(router.routes()).use(router.allowedMethods());
 
 app.use(articleRouter.routes());
 app.use(tagRouter.routes());
+app.use(draftRouter.routes());
 
 // Start the application
 const server = app.listen(port, hostname, () => {
