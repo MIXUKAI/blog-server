@@ -29,4 +29,7 @@ router.post('/add', ArticleControllers.add);
 // 根据id号来更新文章
 router.post('/update/:id', ArticleControllers.findByIdAndUpdate);
 
+// 根据id来删除（隐藏）文章
+router.post('/delete/:id', ArticleControllers.findByIdAndSetHidden);
+
 module.exports = router;
