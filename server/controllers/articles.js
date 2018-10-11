@@ -15,6 +15,22 @@ class ArticleControllers {
     ctx.body = await Article.find().skip(skipPage * sizeOfPage).limit(sizeOfPage);
   }
 
+
+  static async findByTagName(ctx) {
+    try {
+      const article = await Article.find({ tags: ctx.params.tagname });
+      if (!article) {
+        ctx.throw(404);
+      }
+      ctx.body = article;
+    } catch (err) {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+        ctx.throw(404);
+      }
+      ctx.throw(500);
+    }
+  }
+
   static async findById(ctx) {
     try {
       const article = await Article.findById(ctx.params.id);
