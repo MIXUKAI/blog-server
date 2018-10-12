@@ -20,11 +20,11 @@ router.get('/', DraftControllers.findByPage);
 // 详细的某篇草稿
 router.get('/:id', DraftControllers.findById);
 
-// 发布草稿
+// 添加草稿
 router.post('/add', DraftControllers.add);
 
 // 发布草稿
-router.post('/publish', DraftControllers.removeFromDraftsAndAddToArticles);
+router.post('/publish/:id', DraftControllers.removeFromDraftsAndAddToArticles);
 
 // 根据id号来更新草稿
 router.post('/update/:id', DraftControllers.findByIdAndUpdate);

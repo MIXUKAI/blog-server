@@ -104,7 +104,8 @@ class DraftControllers {
       if (!draft) {
         ctx.throw(404);
       }
-      const article = new Article(draft).save();
+      const body = ctx.request.body;
+      const article = new Article(body).save();
       ctx.body = {
         code: 0, // 0代表成功
         msg: 'successful',
