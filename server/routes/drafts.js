@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const { DraftControllers } = require('../controllers/drafts');
 const { baseApi } = require('../../config');
+const checkAuth = require('../middlewares/check_auth');
 
 // Creata a Router instance
 const router = new Router();
@@ -21,15 +22,15 @@ router.get('/', DraftControllers.findByPage);
 router.get('/:id', DraftControllers.findById);
 
 // 添加草稿
-router.post('/add', DraftControllers.add);
+router.post('/add', checkAuth, DraftControllers.add);
 
 // 发布草稿
-router.post('/publish/:id', DraftControllers.removeFromDraftsAndAddToArticles);
+router.post('/publish/:id', checkAuth, DraftControllers.removeFromDraftsAndAddToArticles);
 
 // 根据id号来更新草稿
-router.post('/update/:id', DraftControllers.findByIdAndUpdate);
+router.post('/update/:id', checkAuth, DraftControllers.findByIdAndUpdate);
 
 // 根据id来删除（隐藏）草稿
-router.post('/delete/:id', DraftControllers.findByIdAndSetHidden);
+router.post('/delete/:id', checkAuth, DraftControllers.findByIdAndSetHidden);
 
 module.exports = router;

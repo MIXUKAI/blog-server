@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const { ArticleControllers } = require('../controllers/articles');
 const { baseApi } = require('../../config');
+const checkAuth = require('../middlewares/check_auth');
 
 // Creata a Router instance
 const router = new Router();
@@ -24,12 +25,12 @@ router.get('/tag/:tagname', ArticleControllers.findByTagName);
 router.get('/:id', ArticleControllers.findById);
 
 // 发布文章
-router.post('/add', ArticleControllers.add);
+router.post('/add', checkAuth, ArticleControllers.add);
 
 // 根据id号来更新文章
-router.post('/update/:id', ArticleControllers.findByIdAndUpdate);
+router.post('/update/:id', checkAuth, ArticleControllers.findByIdAndUpdate);
 
 // 根据id来删除（隐藏）文章
-router.post('/delete/:id', ArticleControllers.findByIdAndSetHidden);
+router.post('/delete/:id', checkAuth, ArticleControllers.findByIdAndSetHidden);
 
 module.exports = router;
