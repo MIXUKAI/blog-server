@@ -4,21 +4,20 @@ const Router = require('koa-router');
 var bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
 const { hostname, port, connectionStr } = require('./config');
+const jwt = require('koa-jwt');
 
 const articleRouter = require('./server/routes/articles');
 const tagRouter = require('./server/routes/tags');
 const draftRouter = require('./server/routes/drafts');
+const AuthenticateRouter = require('./server/routes/authenticate');
 
-// Connect to the database
 mongoose.connect(connectionStr, { useNewUrlParser: true });
-// Get notified if we connect successfully or if a connection error occurs
 const db = mongoose.connection;
 db.on('error', err => console.error(err));
 db.once('open', () => console.log('Congratulations, mongodb connected successfully~'));
 
-// Create Koa application
 const app = new Koa();
-const router = new Router();
+// const router = new Router();
 
 app.use(bodyParser());
 
@@ -32,29 +31,26 @@ app.use(cors({
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
 
-// index page
-router.get('/', index);
-router.get('/article/:id', getArticle);
-// generate index page
-function index(ctx) {
-  ctx.body = 'this is index page';
-}
-// show article about particular identity
-function getArticle(ctx) {
-  ctx.body = `article'is ${ctx.params.id}`;
-}
+// router.get('/', index);
+// function index(ctx) {
+//   ctx.body = 'this is index page';
+// }
 
-
-
-// app.use(ctx => ctx.body = 'hello world');
-
-app.use(router.routes()).use(router.allowedMethods());
-
+// app.use(jwt({ secret: 'shared-secret' }));
 app.use(articleRouter.routes());
 app.use(tagRouter.routes());
 app.use(draftRouter.routes());
+app.use(AuthenticateRouter.routes());
 
-// Start the application
+// app.use(router.routes()).use(router.allowedMethods());
+
+
+// router.get('/api/login', ctx => {
+//   ctx.body = {
+//     hello: 'dd'
+//   }
+// })
+
 const server = app.listen(port, hostname, () => {
   const address = server.address();
   console.log(`server is running at http://${address.address}:${address.port}/`);

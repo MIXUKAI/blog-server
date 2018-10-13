@@ -9,6 +9,8 @@
     "start": "nodemon app.js"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "jsonwebtoken": "^8.3.0",
     "koa": "^2.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-jwt": "^3.5.1",
