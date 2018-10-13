@@ -6,6 +6,10 @@ module.exports = async (ctx, next) => {
     jwt.verify(token, 'mixukai');
     await next();
   } catch(err) {
-    ctx.status = 401;
+    ctx.body = {
+      code: 1,
+      status: 401,
+      msg: 'unauthorized'
+    }
   }
 }
