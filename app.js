@@ -1,6 +1,6 @@
 const Koa = require('koa');
 const cors = require('koa2-cors');
-var bodyParser = require('koa-bodyparser');
+const bodyParser = require('koa-bodyparser');
 const mongoose = require('mongoose');
 const { port, connectionStr } = require('./config');
 
@@ -34,5 +34,5 @@ app.use(draftRouter.routes());
 app.use(AuthenticateRouter.routes());
 
 app.listen(port, () => {
-  console.log(`server is running at prot ${prot}`);
+  console.log(`server is running at port ${port}`);
 })
