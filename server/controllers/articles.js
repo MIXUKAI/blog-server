@@ -1,4 +1,5 @@
 const Article = require('../models/articles').Article;
+const sizeOfPage = 5;
 
 class ArticleControllers {
 
@@ -7,9 +8,14 @@ class ArticleControllers {
     ctx.body = await Article.find({hidden: false});
   }
 
+  // 查看总共多少页
+  static async findPageCount(ctx) {
+    const articleCount = await Article.find({hidden: false}).count();
+    ctx.body = Math.ceil(articleCount / sizeOfPage);
+  }
+
   static async findByPage(ctx) {
     // TODO: need try catch?
-    const sizeOfPage = 5;
     const page = ctx.query.page || 1;
     const skipPage = page - 1;
     ctx.body = await Article.find({hidden: false}).skip(skipPage * sizeOfPage).limit(sizeOfPage);
@@ -107,6 +113,28 @@ class ArticleControllers {
         code: 1,
         msg: 'fail'
       };
+      ctx.throw(500);
+    }
+  }
+
+  // 找到所有发布的文章的标签，而不是写文章时候要用的常用标签
+  static async findAllPublishedTags(ctx) {
+    try {
+      const articles = await Article.find({hidden:false});
+      if (!articles) {
+        ctx.throw(404);
+      }
+      // 所有标签累计在一起；
+      const allTags = articles.reduce((pre, cur) => {
+        return pre.concat(cur.tags);
+      }, []);
+      // 去重
+      const result = [...new Set(allTags)];
+      ctx.body = result;
+    } catch (err) {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+        ctx.throw(404);
+      }
       ctx.throw(500);
     }
   }
